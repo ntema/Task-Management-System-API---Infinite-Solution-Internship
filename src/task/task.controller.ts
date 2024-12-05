@@ -27,9 +27,7 @@ import { RolesGuard } from 'src/auth/guard/role.guard';
 
 @Controller('tasks')
 export class TaskController {
-  constructor(private readonly taskService: TaskService,
-     private readonly userService: UsersService,
-    private readonly authService: AuthService) {}
+  constructor(private readonly taskService: TaskService) {}
 
   @Post()
   //@UseGuards(AuthGuard())
@@ -72,8 +70,6 @@ export class TaskController {
     @Body() task: UpdateTaskDto,
     @Req() req
   ): Promise<Task> {
-    const checkUser = this.userService.findSingleUser({_id: req.user._id} );
-    if(!checkUser) throw new HttpException("user not logged in", 404)
     return this.taskService.update(id, task);
   }
 
