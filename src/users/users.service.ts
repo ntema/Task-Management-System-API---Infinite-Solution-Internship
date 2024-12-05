@@ -7,12 +7,14 @@ import { Model } from 'mongoose';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectModel(User.name) private userModel:Model<User>
-  ) {}
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   findAllUsers() {
     return this.userModel.find();
+  }
+
+  findSingleUser(id:any) {
+    return this.userModel.findOne(id);
   }
 
   deleteUser(id: string) {

@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 export enum Status {
     COMPLETED = 'completed',
-    INPROGRESS = 'in-progres',
+    INPROGRESS = 'in-progress',
 }
 @Schema({
     timestamps:true

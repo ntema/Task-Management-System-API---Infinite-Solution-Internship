@@ -9,8 +9,12 @@ import {
   Query,
   UseGuards,
   Req,
+  Patch,
+  HttpException,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
+import { UsersService } from 'src/users/users.service';
+import { AuthService } from 'src/auth/auth.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './schemas/task.schema';
@@ -23,21 +27,15 @@ import { RolesGuard } from 'src/auth/guard/role.guard';
 
 @Controller('tasks')
 export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+  constructor(private readonly taskService: TaskService,
+     private readonly userService: UsersService,
+    private readonly authService: AuthService) {}
 
   @Post()
   //@UseGuards(AuthGuard())
   @UseGuards(JwtAuthGuard)
-  async createTask(@Body() task:CreateTaskDto, @Req() req): Promise<Task> {
+  async createTask(@Body() task: CreateTaskDto, @Req() req): Promise<Task> {
     return this.taskService.create(task, req.user);
-  }
-
-  @Put(':id')
-  updateTask(
-    @Param('id') id: string,
-    @Body() task: UpdateTaskDto,
-  ): Promise<Task> {
-    return this.taskService.update(id, task);
   }
 
   //search and return response by keyword
@@ -46,6 +44,12 @@ export class TaskController {
     return this.taskService.findByKeyword(query);
   }
 
+  @Get('user')
+  @Roles(Role.User, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  findAllTaskPerUser(@Req() req): Promise<Task[]> {
+    return this.taskService.findAllPerUser({ user: req.user._id });
+  }
   @Get()
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -54,16 +58,35 @@ export class TaskController {
   }
 
   @Get(':id')
+  @Roles(Role.User, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   findOneBook(@Param('id') id: string) {
     return this.taskService.findOne(id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-  //   return this.taskService.update(id, updateBookDto);
-  // }
+  @Put(':id')
+  @Roles(Role.User, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  updateTask(
+    @Param('id') id: string,
+    @Body() task: UpdateTaskDto,
+    @Req() req
+  ): Promise<Task> {
+    const checkUser = this.userService.findSingleUser({_id: req.user._id} );
+    if(!checkUser) throw new HttpException("user not logged in", 404)
+    return this.taskService.update(id, task);
+  }
+
+  @Patch(':id')
+  @Roles(Role.User, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
+    return this.taskService.update(id, updateTaskDto);
+  }
 
   @Delete(':id')
+  @Roles(Role.User, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   remove(@Param('id') id: string) {
     return this.taskService.remove(id);
   }

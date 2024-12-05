@@ -9,9 +9,6 @@ export class User extends Document{
     @Prop({unique: [true, "duplicate username"]})
     username: string;
 
-    // @Prop({unique: [true, "duplicate email"]})
-    // email: string;
-
     @Prop()
     password: string;
 

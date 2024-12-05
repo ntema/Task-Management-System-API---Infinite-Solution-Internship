@@ -36,6 +36,11 @@ export class TaskService {
     });
   }
 
+  async findAllPerUser( _id: any): Promise<Task[]> {
+    const tasks = await this.taskModel.find(_id);
+    return tasks;
+  }
+
   async findAll(): Promise<Task[]> {
     const tasks = await this.taskModel.find();
     return tasks;
@@ -44,7 +49,7 @@ export class TaskService {
   //find by keyword
 
   async findByKeyword(query: Query): Promise<Task[]> {
-    const resPerPage = 2;
+    const resPerPage = 5;
     const currentPage = Number(query.page) || 1;
     const skip = resPerPage * (currentPage - 1);
     const keyword = query.keyword
