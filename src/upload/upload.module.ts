@@ -8,7 +8,7 @@ import { FILE_UPLOAD_DIR } from './constants';
   imports:[MulterModule.register({
     dest:FILE_UPLOAD_DIR,
     limits:{
-      fieldSize: 1000 * 1000 * 10,
+      fieldSize: 10000 * 10000 * 100,
     },
   })],
   controllers: [UploadController],

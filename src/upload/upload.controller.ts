@@ -15,11 +15,10 @@ export class UploadController {
     FileInterceptor('file', {
       storage: diskStorage({
         filename: fileNameEditor,
-        //  filename : () => {},
         destination: FILE_UPLOAD_DIR,
       }),
       limits: {
-        fileSize: 10000 * 10000 * 10,
+        fileSize: 10000 * 10000 * 100,
       },
       fileFilter: imageFileFilter,
     }),
