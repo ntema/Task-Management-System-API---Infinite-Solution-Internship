@@ -9,16 +9,20 @@ import {
   IsString,
   isEnum,
 } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTaskDto {
+  @ApiProperty({ description: 'your preferred title' })
   @IsNotEmpty()
   @IsString()
   readonly title: string;
 
+  @ApiProperty({ description: 'your preferred description' })
   @IsNotEmpty()
   @IsString()
   readonly description: string;
 
+  @ApiProperty({ description: 'your preferred status' })
   @IsOptional()
   @IsEnum(Status, { message: 'wrong status selected' })
   readonly status: Status;

@@ -6,11 +6,18 @@ import { Roles } from 'src/auth/decorator/role.decorator';
 import { Role } from 'src/auth/enum/role.enum';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
 import { RolesGuard } from 'src/auth/guard/role.guard';
+import { ApiCreatedResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @ApiOperation({ summary: 'used by admin to fecth users' })
+  @ApiResponse({
+    status: 200,
+    description: 'success',
+    type: CreateUserDto,
+  })
   @Get()
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -18,6 +25,11 @@ export class UsersController {
     return this.usersService.findAllUsers();
   }
 
+  @ApiOperation({ summary: 'used by admin to delete users' })
+  @ApiCreatedResponse({
+    description: 'success',
+    type: CreateUserDto,
+  })
   @Delete(':id')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
